@@ -318,7 +318,8 @@ instead."
     (and
 
      ;; We don't care about Super/Hyper/Alt modifiers
-     (not super)
+;;madhu 230904 actually we care about Super, and maybe Hyper
+;;     (not super)
      (not hyper)
      (not alt)
 
@@ -337,6 +338,8 @@ instead."
 
       ;; C-x is unrepresentable for digits
       (and (string-match-p "^[0-9]$" key) control)
+
+      (and (string-match-p "^[a-z]$" key) super)
 
       ;; ...as well as punctuation and some special characters
       (and (member key '("Return" "Tab" "BackSpace"
