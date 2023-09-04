@@ -83,6 +83,8 @@ according to the term-keys configuration.
 The returned string is suitable to be added as-is to an
 ~/.Xresources file."
   (concat
+   "\nXTerm*eightBitInput:false"
+   "\nUXTerm*eightBitInput:false"
    "\n*VT100.Translations: #override \\\n"
    (mapconcat #'identity
 	      (term-keys/xterm-translations)
@@ -97,6 +99,7 @@ This function returns a list of xterm command line arguments
 necessary to configure the terminal emulator to encode key
 sequences, according to the term-keys configuration."
   (list
+   "-xrm" "XTerm*eightBitInput:false"
    "-xrm"
    (mapconcat #'identity
 	      (cons
