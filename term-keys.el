@@ -355,6 +355,20 @@ instead."
       ))))
 
 
+(defun term-keys/want-key-p-def-super-only (key mods)
+  (let ((shift   (elt mods 0))
+	(control (elt mods 1))
+	(meta    (elt mods 2))
+	(super   (elt mods 3))
+	(hyper   (elt mods 4))
+	(alt     (elt mods 5)))
+    (and
+     (not hyper)
+     (not alt)
+     (or
+      (and (string-match-p "^[a-z]$" key) super)))))
+
+
 (defcustom term-keys/want-key-p-func 'term-keys/want-key-p-def
   "Function for deciding whether to encode a key combination.
 
