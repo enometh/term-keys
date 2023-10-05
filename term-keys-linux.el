@@ -50,7 +50,8 @@
 		 (const :tag "(none)" nil)))
 
 
-(defcustom term-keys/linux-modifier-map ["Shift" "Control" "Alt" nil nil "AltGr"]
+
+(defcustom term-keys/linux-modifier-map ["Shift" "Control" "Alt" nil nil "AltGR"]
   "Modifier keys for Linux console keymaps.
 
 This should be a vector of 6 elements, with each element being a
