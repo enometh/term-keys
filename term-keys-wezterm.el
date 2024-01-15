@@ -32,11 +32,19 @@
 (require 'term-keys-glfw-mods)
 
 
+;; ;madhu 240115
+(defun term-keys/hack-wezterm-lowercase-key (keymap)
+  (let ((a (elt keymap 0)))
+    (and (= (length a) 1)
+	 (<= ?a (elt a 0) ?z)
+	 a)))
 (defun term-keys/wezterm-format-key (keymap mods)
   "Format key in wezterm syntax according to mods."
   (or                    ; Apply shift
    (and (elt mods 0)     ; With Shift?
-	(elt keymap 13)) ; Use shifted column
+	(elt keymap 13)) ; Use shifted colum
+   (and (not (elt mods 0))
+	(term-keys/hack-wezterm-lowercase-key keymap))
    (elt keymap 12)))     ; Use non-shifted column
 
 
