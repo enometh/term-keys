@@ -64,7 +64,7 @@ according to the term-keys configuration."
           (apply #'concat
 	         (term-keys/iterate-keys
 	          (lambda (index keymap mods)
-	            (format "  {key = \"%s\", mods = \"%s\", action = wezterm.action{SendString=\"%s\"}},\n"
+	            (format "  {key = '%s', mods = '%s', action = wezterm.action.SendString '%s'},\n"
 		            (term-keys/wezterm-format-key keymap mods)
 		            (term-keys/wezterm-format-mods mods)
 		            (mapconcat
