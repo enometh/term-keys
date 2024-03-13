@@ -72,12 +72,17 @@ mapping for this modifier."
 			   (elt term-keys/alacritty-modifier-map n))) ; mapped
 		     (number-sequence 0 (1- (length mods)))))) ; 0..5
 
+(defvar term-keys/alacritty-config-format 'toml
+  "If not `toml', output YAML (alacritty versions before 13.0), otherwise
+output TOML.")
 
 (defun term-keys/alacritty-format-mods (mods)
   "Format MODS in Alacritty syntax."
   (if (cl-reduce (lambda (x y) (or x y)) mods)
       (concat
-       ", mods: "
+       (if (eql term-keys/alacritty-config-format 'toml)
+	   ""				; format "mods =" in caller
+	 ", mods: ")
        (mapconcat
 	(lambda (n)
 	  (elt term-keys/alacritty-modifier-map n))
@@ -94,20 +99,29 @@ This function returns, as a string, an alacritty.yml fragment
 necessary to configure Alacritty to encode term-keys key
 sequences, according to the term-keys configuration."
   (apply #'concat
-	 "key_bindings:\n"
+	 (if (not  (eql term-keys/alacritty-config-format 'toml))
+	     "key_bindings:\n")
 	 (term-keys/iterate-keys
 	  (lambda (index keymap mods)
-	    (format "- { key: %s%s, chars: \"%s\" }\n"
-		    (elt keymap 8)
-		    (term-keys/alacritty-format-mods mods)
-		    (mapconcat
-		     (lambda (c) (format "\\x%02x" c))
-		     (append
-		      term-keys/prefix
-		      (term-keys/encode-key index mods)
-		      term-keys/suffix
-		      nil)
-		     ""))))))
+	    (let ((out-key (elt keymap 8))
+		  (out-mods (term-keys/alacritty-format-mods mods))
+		  (out-chars
+		   (mapconcat
+		    (lambda (c)
+		      (format (if (eql term-keys/alacritty-config-format 'toml)
+				  "\\u%04X" "\\x%02x")
+			      c))
+		    (append
+		     term-keys/prefix
+		     (term-keys/encode-key index mods)
+		     term-keys/suffix
+		     nil)
+		    "")))
+	      (if (eql term-keys/alacritty-config-format 'toml)
+		  (format "[[keyboard.bindings]]\nchars = \"%s\"\nkey = \"%s\"\nmods = \"%s\"\n\n"
+			  out-chars out-key out-mods)
+		(format "- { key: %s%s, chars: \"%s\" }\n"
+			out-key out-mods out-chars)))))))
 
 
 (provide 'term-keys-alacritty)
