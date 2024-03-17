@@ -91,8 +91,26 @@ output TOML.")
 	"|"))
     ""))
 
+
+;; event names removed in winit-29 in winit commit 918430979f8219
+;; (https://github.com/rust-windowing/winit) on 03-28-2023. Alacritty
+;; 0.13.1 prints [ERROR] [alacritty_config_derive] Config error:
+;; unknown variant `Apostrophe`, expected one of `Alt`,[...].
+
+(defvar $term-keys/alacritty-missing-names
+  '("Apostrophe" "Apps" "B" "Back" "Backslash" "C" "Capital" "Comma" "D" "Down" "E" "Equals" "F" "G" "Grave" "H" "I" "J" "K" "Key0" "Key1" "Key2" "Key3" "Key4" "Key5" "Key6" "Key7" "Key8" "Key9" "L" "LAlt" "LBracket" "LControl" "LShift" "LWin" "Left" "M" "Minus" "N" "O" "P" "Period" "Q" "R" "RAlt" "RBracket" "RControl" "RShift" "RWin" "Return" "Right" "S" "Scroll" "Semicolon" "Slash" "Snapshot" "T" "U" "Up" "V" "W" "X" "Y" "Z")
+  "These key names are gone in winit 29")
+
 (defun term-keys/alacritty-format-key (_index keymap _mods)
-  (elt keymap 8))
+  (let ((name (elt keymap 8)))
+    (if (and (eql term-keys/alacritty-config-format 'toml) ; XXX assume new winit
+	     (member name $term-keys/alacritty-missing-names))
+	(cond ((equal name "Back") "Backspace")
+	      ((equal name "Backslash") "\\\\")
+	      ((equal name "Return") "Enter")
+	      ((member name $term-keys/alacritty-missing-names)
+	       (elt keymap 0)))
+      name)))
 
 (defun term-keys/alacritty-config ()
   "Construct Alacritty configuration (alacritty.yml fragment).
