@@ -91,6 +91,8 @@ output TOML.")
 	"|"))
     ""))
 
+(defun term-keys/alacritty-format-key (_index keymap _mods)
+  (elt keymap 8))
 
 (defun term-keys/alacritty-config ()
   "Construct Alacritty configuration (alacritty.yml fragment).
@@ -103,7 +105,7 @@ sequences, according to the term-keys configuration."
 	     "key_bindings:\n")
 	 (term-keys/iterate-keys
 	  (lambda (index keymap mods)
-	    (let ((out-key (elt keymap 8))
+	    (let ((out-key (term-keys/alacritty-format-key index keymap mods))
 		  (out-mods (term-keys/alacritty-format-mods mods))
 		  (out-chars
 		   (mapconcat
