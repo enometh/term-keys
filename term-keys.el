@@ -366,6 +366,10 @@ instead."
      (not hyper)
      (not alt)
      (or
+      (and (member key '("Return" "Tab" "BackSpace"
+			 "grave" "minus" "equal" "bracketleft" "bracketright" "semicolon"
+			 "apostrophe" "backslash" "comma" "period" "slash" "space"))
+	   super)
       (and (string-match-p "^[a-z]$" key) super)))))
 
 
